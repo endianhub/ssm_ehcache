@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xh.dao.IStudentDao">
+
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache">
+		<property name="timeToIdleSeconds" value="3600" />
+		<property name="timeToLiveSeconds" value="3600" />
+		<property name="maxEntriesLocalHeap" value="1000" />
+		<property name="maxEntriesLocalDisk" value="10000000" />
+		<property name="memoryStoreEvictionPolicy" value="LRU" />
+	</cache>
+
+
+	<select id="findAll" resultType="studentModel">
+		select id, name, age, sex, score
+		from student
+	</select>
+
+
+	<select id="finById" parameterType="int" resultType="studentModel">
+		select id,
+		name, age, sex, score from student where id = #{paramId}
+	</select>
+
+	<select id="findCount" resultType="int">
+		select count(*) from student
+	</select>
+
+	<insert id="add">
+		insert into student(name, age, sex, score) values(#{name}, #{age},
+		#{sex}, #{score})
+		<selectKey resultType="int" order="AFTER" keyProperty="id">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+
+	<insert id="addBatch">
+		<selectKey resultType="int" order="AFTER" keyProperty="id">
+			select last_insert_id()
+		</selectKey>
+
+		insert into student(name, age, sex, score) values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.name}, #{item.age}, #{item.sex}, #{item.score})
+		</foreach>
+
+	</insert>
+
+	<update id="update">
+		update student
+		<set>
+			<if test="name != null"> name = #{name},</if>
+			<if test="age != null"> age = #{age},</if>
+			<if test="sex != null"> sex = #{sex}, </if>
+			<if test="score != null"> score = #{score},</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="remove">
+		delete from student where id = #{id}
+	</delete>
+</mapper>

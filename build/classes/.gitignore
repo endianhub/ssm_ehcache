@@ -1,0 +1,7 @@
+/com/
+/db.properties
+/ehcache.xml
+/log4j.properties
+/spring-mvc.xml
+/spring-mybatis.xml
+/spring.xml
